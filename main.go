@@ -6,16 +6,23 @@ import (
 	"net/http"
 	"os"
 
+	"encoding/json"
+
 	"github.com/gorilla/mux"
-	// "encoding/json"
 )
+
+type HAL struct {
+	Embedded string `json:"_embedded"`
+}
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello World!")
 }
 
 func getPosts(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "{ \"_embedded\": { \"posts\": [] }}")
+	hal := HAL{"hello"}
+	parsed, _ := json.Marshal(hal)
+	fmt.Fprintf(w, string(parsed))
 }
 
 func main() {
