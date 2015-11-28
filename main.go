@@ -20,7 +20,7 @@ type HAL struct {
 }
 
 type Post struct {
-	Id      int       `json:id`
+	ID      int       `json:"id"`
 	Title   string    `json:"title"`
 	Content string    `json:"content"`
 	Author  string    `json:"author"`
@@ -30,14 +30,14 @@ type Post struct {
 func allPosts() []Post {
 	posts := make([]Post, 2)
 	posts[0] = Post{
-		Id:      1,
+		ID:      1,
 		Title:   "Hello world",
 		Content: "My first post",
 		Author:  "Ken Grønnbeck",
 		Ts:      time.Now(),
 	}
 	posts[1] = Post{
-		Id:      2,
+		ID:      2,
 		Title:   "My first go post",
 		Content: "Not done",
 		Author:  "Ken Grønnbeck",
@@ -57,7 +57,7 @@ func getPosts(w http.ResponseWriter, r *http.Request) {
 	linkPosts := make([]map[string]string, len(posts))
 
 	for index, post := range posts {
-		strID := strconv.Itoa(post.Id)
+		strID := strconv.Itoa(post.ID)
 		linkPosts[index] = map[string]string{
 			"href":  "/posts/" + strID,
 			"title": post.Title,
