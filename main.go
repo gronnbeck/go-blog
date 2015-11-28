@@ -9,11 +9,42 @@ import (
 	"encoding/json"
 
 	"github.com/gorilla/mux"
+
+	"strconv"
+	"time"
 )
 
 type HAL struct {
 	Embedded map[string]interface{} `json:"_embedded"`
-	Links    map[string]string      `json:"_links"`
+	Links    map[string]interface{} `json:"_links"`
+}
+
+type Post struct {
+	Id      int       `json:id`
+	Title   string    `json:"title"`
+	Content string    `json:"content"`
+	Author  string    `json:"author"`
+	Ts      time.Time `json:"ts"`
+}
+
+func allPosts() []Post {
+	posts := make([]Post, 2)
+	posts[0] = Post{
+		Id:      1,
+		Title:   "Hello world",
+		Content: "My first post",
+		Author:  "Ken Grønnbeck",
+		Ts:      time.Now(),
+	}
+	posts[1] = Post{
+		Id:      2,
+		Title:   "My first go post",
+		Content: "Not done",
+		Author:  "Ken Grønnbeck",
+		Ts:      time.Now(),
+	}
+
+	return posts
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
@@ -21,8 +52,20 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getPosts(w http.ResponseWriter, r *http.Request) {
-	embedded := map[string]interface{}{"apple": 5}
-	links := map[string]string{"_self": "/posts"}
+	posts := allPosts()
+	links := map[string]interface{}{}
+	linkPosts := make([]map[string]string, len(posts))
+
+	for index, post := range posts {
+		strID := strconv.Itoa(post.Id)
+		linkPosts[index] = map[string]string{
+			"href":  "/posts/" + strID,
+			"title": post.Title,
+		}
+	}
+
+	links["posts"] = linkPosts
+	embedded := map[string]interface{}{}
 	hal := HAL{Embedded: embedded, Links: links}
 	parsed, _ := json.Marshal(hal)
 	fmt.Fprintf(w, string(parsed))
