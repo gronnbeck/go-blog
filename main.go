@@ -24,6 +24,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/posts", posts.GetPostsHandler)
+	r.HandleFunc("/posts/{id}", posts.GetPostHandler)
 	r.HandleFunc("/", handler)
 
 	http.Handle("/", r)

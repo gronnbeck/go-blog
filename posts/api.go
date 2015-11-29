@@ -1,11 +1,11 @@
 package posts
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
 
+	"github.com/gorilla/mux"
 	"github.com/gronnbeck/go-blog/hal"
 )
 
@@ -26,6 +26,31 @@ func GetPostsHandler(w http.ResponseWriter, r *http.Request) {
 	links["posts"] = linkPosts
 	embedded := map[string]interface{}{}
 	h := hal.HAL{Embedded: embedded, Links: links}
-	parsed, _ := json.Marshal(h)
-	fmt.Fprintf(w, string(parsed))
+	parsed := hal.JSON(h)
+	fmt.Fprintf(w, parsed)
+}
+
+// GetPostHandler exposes the post fetched from url var
+func GetPostHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	idStr := vars["id"]
+	id, err := strconv.Atoi(idStr)
+
+	if err != nil {
+		fmt.Fprintf(w, "Id %v is not an integer", idStr)
+		return
+	}
+
+	post, err := fetchPost(id)
+
+	if err != nil {
+		fmt.Fprintf(w, "The post with id %v does not exist", idStr)
+		return
+	}
+
+	links := map[string]interface{}{}
+	embedded := map[string]interface{}{}
+	h := hal.HAL{Embedded: embedded, Links: links, Data: *post}
+	parsed := hal.JSON(h)
+	fmt.Fprintf(w, parsed)
 }
