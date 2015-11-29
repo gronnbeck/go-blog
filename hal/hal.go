@@ -9,7 +9,7 @@ type HAL struct {
 	Data     interface{}
 }
 
-// Parse HAL into correct JSON
+// JSON parses HAL into correct JSON
 func JSON(hal HAL) string {
 	t := translate(hal)
 	parsed, _ := json.Marshal(t)
