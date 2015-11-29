@@ -9,15 +9,11 @@ import (
 	"encoding/json"
 
 	"github.com/gorilla/mux"
+	"github.com/gronnbeck/go-blog/hal"
 
 	"strconv"
 	"time"
 )
-
-type HAL struct {
-	Embedded map[string]interface{} `json:"_embedded"`
-	Links    map[string]interface{} `json:"_links"`
-}
 
 type Post struct {
 	ID      int       `json:"id"`
@@ -66,8 +62,8 @@ func getPosts(w http.ResponseWriter, r *http.Request) {
 
 	links["posts"] = linkPosts
 	embedded := map[string]interface{}{}
-	hal := HAL{Embedded: embedded, Links: links}
-	parsed, _ := json.Marshal(hal)
+	h := hal.HAL{Embedded: embedded, Links: links}
+	parsed, _ := json.Marshal(h)
 	fmt.Fprintf(w, string(parsed))
 }
 
