@@ -31,11 +31,11 @@ func fetchPost(id int) (*Post, error) {
 
 	index := id - 1
 
-	if index < 0 && index > len(posts) {
+	if index < 0 || index >= len(posts) {
 		return nil, errors.New(
 			"Post with id " + strconv.Itoa(id) + " does not exist")
 	}
 
-	return &posts[id], nil
+	return &posts[index], nil
 
 }
