@@ -18,17 +18,20 @@ type Comment struct {
 	Ts      time.Time `json:"ts"`
 }
 
-func (c Comment) toHAL() hal.HAL {
+func (c Comment) toHAL(ns string) hal.HAL {
 	links := map[string]interface{}{}
-	embedded := map[string]interface{}{}
-	h := hal.HAL{Embedded: embedded, Links: links, Data: c}
+	links["self"] = fmt.Sprintf("%v/%v", ns, c.ID)
+	h := hal.HAL{Embedded: nil, Links: links, Data: c}
 	return h
 }
 
 func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
+
 	vars := mux.Vars(r)
 	idstr := vars["postid"]
 	id, err := strconv.Atoi(idstr)
+
+	ns := fmt.Sprintf("/posts/%v/comments", id)
 
 	if err != nil {
 		fmt.Fprintf(w, "Id %v is not an integer", idstr)
@@ -39,16 +42,16 @@ func GetCommentsHandler(w http.ResponseWriter, r *http.Request) {
 	links := map[string]interface{}{}
 	embedded := map[string]interface{}{}
 
-	embedded["comments"] = translateHals(halifyComments(comments))
+	embedded["comments"] = translateHals(halifyComments(comments, ns))
 	h := hal.HAL{Embedded: embedded, Links: links}
 	j := hal.JSON(h)
 	fmt.Fprintf(w, j)
 }
 
-func halifyComments(comments []Comment) []hal.HAL {
+func halifyComments(comments []Comment, ns string) []hal.HAL {
 	hals := make([]hal.HAL, len(comments))
 	for i, c := range comments {
-		h := c.toHAL()
+		h := c.toHAL(ns)
 		hals[i] = h
 	}
 	return hals

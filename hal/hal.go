@@ -24,9 +24,14 @@ func asMap(post interface{}) map[string]interface{} {
 }
 
 func Translate(hal HAL) map[string]interface{} {
-	m := map[string]interface{}{
-		"_embedded": hal.Embedded,
-		"_links":    hal.Links,
+	m := map[string]interface{}{}
+
+	if hal.Embedded != nil {
+		m["_embedded"] = hal.Embedded
+	}
+
+	if hal.Links != nil {
+		m["_links"] = hal.Links
 	}
 
 	for k, v := range asMap(hal.Data) {
