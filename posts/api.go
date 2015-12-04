@@ -49,7 +49,12 @@ func GetPostHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	links := map[string]interface{}{}
+	links["self"] = "/posts/" + idStr
+	links["comments"] = "/posts/" + idStr + "/comments"
+
 	embedded := map[string]interface{}{}
+	embedded["comments"] = make([]map[string]interface{}, 0)
+
 	h := hal.HAL{Embedded: embedded, Links: links, Data: *post}
 	parsed := hal.JSON(h)
 	fmt.Fprintf(w, parsed)
