@@ -11,7 +11,7 @@ type HAL struct {
 
 // JSON parses HAL into correct JSON
 func JSON(hal HAL) string {
-	t := translate(hal)
+	t := Translate(hal)
 	parsed, _ := json.Marshal(t)
 	return string(parsed)
 }
@@ -23,7 +23,7 @@ func asMap(post interface{}) map[string]interface{} {
 	return dat
 }
 
-func translate(hal HAL) map[string]interface{} {
+func Translate(hal HAL) map[string]interface{} {
 	m := map[string]interface{}{
 		"_embedded": hal.Embedded,
 		"_links":    hal.Links,

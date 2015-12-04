@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
+	"github.com/gronnbeck/go-blog/comments"
 	"github.com/gronnbeck/go-blog/posts"
 )
 
@@ -23,8 +24,10 @@ func main() {
 	}
 
 	r := mux.NewRouter()
-	r.HandleFunc("/posts", posts.GetPostsHandler)
+	r.HandleFunc("/posts/{postid}/comments", comments.GetCommentsHandler)
 	r.HandleFunc("/posts/{id}", posts.GetPostHandler)
+	r.HandleFunc("/posts", posts.GetPostsHandler)
+
 	r.HandleFunc("/", handler)
 
 	http.Handle("/", r)
